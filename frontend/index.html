@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diabetes Prediction</title>
+
+    <style>
+        body {
+            background: #f0f2f5;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        .container {
+            width: 450px;
+            margin: 50px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #2b79d3;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1f5ca8;
+        }
+
+        #result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .positive {
+            color: red;
+        }
+
+        .negative {
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Diabetes Prediction</h2>
+
+    <input type="number" id="Pregnancies" placeholder="Pregnancies">
+    <input type="number" id="Glucose" placeholder="Glucose">
+    <input type="number" id="BloodPressure" placeholder="Blood Pressure">
+    <input type="number" id="SkinThickness" placeholder="Skin Thickness">
+    <input type="number" id="Insulin" placeholder="Insulin">
+    <input type="number" id="BMI" placeholder="BMI">
+    <input type="number" id="DiabetesPedigreeFunction" placeholder="Diabetes Pedigree Function">
+    <input type="number" id="Age" placeholder="Age">
+
+    <button onclick="predict()">Predict</button>
+
+    <div id="result"></div>
+</div>
+
+
+<script>
+async function predict() {
+    const data = {
+        Pregnancies: Number(document.getElementById("Pregnancies").value),
+        Glucose: Number(document.getElementById("Glucose").value),
+        BloodPressure: Number(document.getElementById("BloodPressure").value),
+        SkinThickness: Number(document.getElementById("SkinThickness").value),
+        Insulin: Number(document.getElementById("Insulin").value),
+        BMI: Number(document.getElementById("BMI").value),
+        DiabetesPedigreeFunction: Number(document.getElementById("DiabetesPedigreeFunction").value),
+        Age: Number(document.getElementById("Age").value),
+    };
+
+    const response = await fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    const resultDiv = document.getElementById("result");
+
+    if (result.error) {
+        resultDiv.innerHTML = "Error: " + result.error;
+        resultDiv.classList = "positive";
+    } else {
+        resultDiv.innerHTML = "Prediction: " + result.result;
+        resultDiv.classList = result.prediction === 1 ? "positive" : "negative";
+    }
+}
+</script>
+
+</body>
+</html>
